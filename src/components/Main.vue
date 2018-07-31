@@ -3,8 +3,8 @@
     <h1>Subnet Calculator</h1>
     <div class="row">
         <div class="col-sm-12 col-md-6">
-            <input v-model.lazy='ip.dec' required class="form-control" type="text" placeholder="Ip Address/Prefix">
-            <input required v-model.lazy='host'  class="form-control" type="text" placeholder="Host Number">
+            <input v-model.lazy='ip.dec' required class="form-control" type="tel" placeholder="Ip Address/Prefix">
+            <input required v-model.lazy='host'  class="form-control" type="tel" placeholder="Host Number">
             <button  v-bind:class="{disabled: showSubnet}" @click="subnetp" type="button" class="btn btn-dark">Subnet</button>
             <button v-bind:class="{disabled: !showSubnet}" @click="clear" type="button" class="btn btn-dark">Clear</button>
         </div>
