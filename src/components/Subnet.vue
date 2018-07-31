@@ -6,38 +6,39 @@
         <p># Sunets : {{subnetN}}</p>
         <p># Subnet bits: {{subnetBitN}}</p>
         <p># Usable Host/subnet : {{HostusableN}}</p>
-        <p>
-            <strong>New Mask: {{newMask}}/{{newPrefix}}</strong>
-        </p>
+        <p><strong>New Mask: {{newMask}}/{{newPrefix}}</strong></p>
+        <div class="containerS">
+            <div class="contentS">
+                <table class="table text-center">
+                    <thead class="thead-dark">
+                        <tr>
+                            <th scope="col">#Subnet</th>
+                            <th scope="col">Network</th>
+                            <th v-if="!itsMobile()" scope="col">Usable Host Range</th>
+                            <th v-if="!itsMobile()" scope="col">Broadcast</th>
+                        </tr>
+                    </thead>
 
- 
-            <table class="table text-center">
-                <thead class="thead-dark">
-                    <tr>
-                        <th scope="col">#Subnet</th>
-                        <th scope="col">Network</th>
-                        <th scope="col">Usable Host Range</th>
-                        <th scope="col">Broadcast</th>
-                    </tr>
-                </thead>
-                <tbody class="text-center">
-                    <tr v-for="(net,index) in netList" :key="index">
+                    <tbody class="text-center">
                         <tr v-bind:class="{'table-secondary': bcolor(index),'text-dark': bcolor(index),last: index === (networks.length-1)}" v-for="(net,index) in netList"
                             :key="net">
                             <th scope="row">{{index}}</th>
                             <td>{{net}}/{{newPrefix}}</td>
-                            <td>{{ipToString(toDecimal(findFirst(net)),2)}} >> {{ipToString(findLast(bradcast[index]),2)}}</td>
-                            <td>{{bradcast[index]}}/{{newPrefix}}</td>
+                            <td v-if="!itsMobile()">{{ipToString(toDecimal(findFirst(net)),2)}} >> {{ipToString(findLast(bradcast[index]),2)}}</td>
+                            <td v-if="!itsMobile()">{{bradcast[index]}}/{{newPrefix}}</td>
                         </tr>
-                </tbody>
+                       
+                    </tbody>
+                </table>
+            <infinite-loading spinner="waveDots" @infinite="infiniteHandler">
+                            <span slot="no-more">
+                                Showed {{networks.length}} Networks :)
+                            </span>
+                        </infinite-loading>
+            </div>
+             
+        </div>
 
-            </table>
-   
-        <infinite-loading spinner="waveDots" @infinite="infiniteHandler">
-            <span slot="no-more">
-                Showed {{networks.length}} Networks :)
-            </span>
-        </infinite-loading>
     </div>
 </div>
 </template>
@@ -45,6 +46,7 @@
 <script>
 import subnetMixin from '../mixins/subnetMixins';
 import InfiniteLoading from 'vue-infinite-loading';
+import PerfectScrollbar from 'perfect-scrollbar';
 export default {
     components: {
     InfiniteLoading
@@ -68,12 +70,17 @@ export default {
            newPrefix: 0,
            networks:[],
            bradcast: [],
-           netList: []
+           netList: [],
+           windowWidth: 0
         }
     },
     methods:{
         itsMobile: function(){
-
+            if(this.windowWidth <= 769){
+                return true;
+            }else{
+                return false;
+            }
         },
         bcolor:function(n){
             if((n%2) !=0){
@@ -177,6 +184,12 @@ export default {
     mixins:[subnetMixin],
     mounted(){
         this.subnet();
+        var ps = new PerfectScrollbar('.containerS');
+        this.$nextTick(() => {
+            window.addEventListener('resize', () => {
+                this.windowWidth = window.innerWidth
+            });
+        });
     }
 }
 </script>
@@ -195,6 +208,17 @@ export default {
 }
 .hidethis{
   display:none;
+}
+.containerS {
+  position: relative;
+  width: 100%;
+  height: 500px;
+  overflow: auto;
+  margin-bottom: 20px;
+}
+.containerS .contentS {
+  width: 100%;
+  height: 500px;
 }
 </style>
 
