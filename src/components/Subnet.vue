@@ -182,6 +182,9 @@ export default {
         }
     },
     mixins:[subnetMixin],
+    beforeMount(){
+        this.windowWidth = window.innerWidth;
+    },
     mounted(){
         this.subnet();
         var ps = new PerfectScrollbar('.containerS');
