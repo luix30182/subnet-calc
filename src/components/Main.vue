@@ -17,15 +17,6 @@
             <p>Decimal: {{maskIP}}</p>
             <p>Binary: {{toBinaryMask}}</p>
         </div>
-        <div id="ipInfo" class="col-sm-12 col-md-6">
-            <h3>Network Info</h3>
-            <h5>Network</h5>
-            <p>Decimal: {{ip.dec}}</p>
-            <p>Binary: {{binaryIP}}</p>
-            <h5>NetMask</h5>
-            <p>Decimal: {{maskIP}}</p>
-            <p>Binary: {{toBinaryMask}}</p>
-        </div>
     </div>
     <subnet-app v-if="showSubnet" v-bind:ip='ip,host'></subnet-app>
 </div>
