@@ -1,5 +1,6 @@
 <template>
 <div id="main" class="container">
+    <vlist-app></vlist-app>
     <h1>Subnet Calculator</h1>
     <div class="row">
         <div class="col-sm-12 col-md-6">
@@ -11,6 +12,7 @@
             </div>            
             <button @click="subnetp" type="button" class="btn btn-dark">Subnet</button>
             <button @click="clear" type="button" class="btn btn-dark">Clear</button>
+            <button @click="$modal.show('list')" type="button" class="btn btn-primary">VLSM</button>
         </div>
         <div id="ipInfo" class="col-sm-12 col-md-6">
             <h3>Network Info</h3>
@@ -23,15 +25,20 @@
         </div>
     </div>
     <subnet-app v-if="showSubnet" v-bind:ip='ip,host'></subnet-app>
+
 </div>
 </template>
 
 <script>
   import Subnet from './Subnet.vue'
+  import Vlsm from './Vlsm.vue'
+  import vlsmList from './vlsmList.vue'
   import subetMixins from'../mixins/subnetMixins'
   export default {
     components:{
-      'subnet-app': Subnet
+      'subnet-app': Subnet,
+      'vlsm-app': Vlsm,
+      'vlist-app': vlsmList
     },
     head: {
       meta:[{
@@ -47,7 +54,8 @@
           reverse:false
         },
         host: '',
-        showSubnet: false
+        showSubnet: false,
+        showVlsm: false
       }
     },
     methods:{
@@ -91,7 +99,8 @@
         }else{
           return ''
         }
-      }
+      },
+      
     },
     mixins: [subetMixins]
   }
