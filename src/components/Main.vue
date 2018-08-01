@@ -5,8 +5,12 @@
         <div class="col-sm-12 col-md-6">
             <input v-model.lazy='ip.dec' required class="form-control" type="tel" placeholder="Ip Address/Prefix">
             <input required v-model.lazy='host'  class="form-control" type="tel" placeholder="Host Number">
-            <button  v-bind:class="{disabled: showSubnet}" @click="subnetp" type="button" class="btn btn-dark">Subnet</button>
-            <button v-bind:class="{disabled: !showSubnet}" @click="clear" type="button" class="btn btn-dark">Clear</button>
+            <div class="form-check position-static">
+              <input class=" form-check-input position-static" type="checkbox" id="reverse" value="Invert Order" v-model.lazy="ip.reverse" v-bind:disabled="showSubnet">
+              <label class="form-check-label position-static" for="reverse">  Invert Order</label>
+            </div>            
+            <button @click="subnetp" type="button" class="btn btn-dark">Subnet</button>
+            <button @click="clear" type="button" class="btn btn-dark">Clear</button>
         </div>
         <div id="ipInfo" class="col-sm-12 col-md-6">
             <h3>Network Info</h3>
@@ -39,7 +43,8 @@
         ip:{
           dec:'',
           prefix:'',
-          ip:[]
+          ip:[],
+          reverse:false
         },
         host: '',
         showSubnet: false
@@ -47,13 +52,11 @@
     },
     methods:{
       subnetp: function(){
-        this.showSubnet = true;
-        this.separete();
+          this.separete();
+          this.showSubnet = true; 
       },
       clear: function(){
         this.showSubnet = false;
-        this.ip.dec = '';
-        this.host = '';
       },
       separete: function(){
         var sip = this.ip.dec.split('/');
@@ -116,7 +119,7 @@ button{
   padding: 0;
   margin: 0;
 }
-@media only screen and (max-width: 600px) {
+@media only screen and (max-width: 767px) {
   #ipInfo{
     margin-top: 20px;
     margin-bottom: 20px;

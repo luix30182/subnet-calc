@@ -5,7 +5,7 @@
         <p>Jump step: {{hostN}}</p>
         <p># Sunets : {{subnetN}}</p>
         <p># Subnet bits: {{subnetBitN}}</p>
-        <p># Usable Host/subnet : {{HostusableN}}</p>
+        <p># Usable Host/subnet : {{hostusableN}}</p>
         <p><strong>New Mask: {{newMask}}/{{newPrefix}}</strong></p>
         <div class="containerS">
             <div class="contentS">
@@ -18,11 +18,10 @@
                             <th v-if="!itsMobile()" scope="col">Broadcast</th>
                         </tr>
                     </thead>
-
                     <tbody class="text-center">
                         <tr v-bind:class="{'table-secondary': bcolor(index),'text-dark': bcolor(index),last: index === (networks.length-1)}" v-for="(net,index) in netList"
                             :key="net">
-                            <th scope="row">{{index}}</th>
+                            <th scope="row">{{getIndex(index)}}</th>
                             <td>{{net}}/{{newPrefix}}</td>
                             <td v-if="!itsMobile()">{{ipToString(toDecimal(findFirst(net)),2)}} >> {{ipToString(findLast(bradcast[index]),2)}}</td>
                             <td v-if="!itsMobile()">{{bradcast[index]}}/{{newPrefix}}</td>
@@ -30,15 +29,11 @@
                        
                     </tbody>
                 </table>
-            <infinite-loading spinner="waveDots" @infinite="infiniteHandler">
-                            <span slot="no-more">
-                                Showed {{networks.length}} Networks :)
-                            </span>
-                        </infinite-loading>
+                <infinite-loading spinner="waveDots" @infinite="infiniteHandler">
+                    <span slot="no-more">Showed {{networks.length}} Networks :)</span>
+                </infinite-loading>
             </div>
-             
         </div>
-
     </div>
 </div>
 </template>
@@ -49,7 +44,7 @@ import InfiniteLoading from 'vue-infinite-loading';
 import PerfectScrollbar from 'perfect-scrollbar';
 export default {
     components: {
-    InfiniteLoading
+        InfiniteLoading
     },
     props:{
         ip:{
@@ -65,7 +60,7 @@ export default {
            hostN: 0,
            subnetN: 0,
            subnetBitN: 0,
-           HostusableN: 0,
+           hostusableN: 0,
            newMask: '',
            newPrefix: 0,
            networks:[],
@@ -87,82 +82,26 @@ export default {
                 return true;
             }
         },
-        getHostN:function(host){
-            var n = 0;
-            var temp = 0;
-            while((temp-host)<2){
-                n++;
-                temp = 2**n;
-            }
-            return n;
-        },
-        getSubnetNumber: function(){
-           return 32 - this.getHostN(this.host) - Number(this.ip.prefix);
-        },
         subnet: function(){
             this.hostN = 2 ** this.getHostN(this.host);
-            this.subnetN = 2 ** this.getSubnetNumber();
-            this.subnetBitN = this.getSubnetNumber();
-            this.HostusableN = this.hostN - 2;
-            this.subnetCalc();
-        },
-        subnetCalc: function(){
-            this.newPrefix = Number(this.ip.prefix) + this.subnetBitN;
-            this.newMask = this.getMask(this.newPrefix);
-            var s = this.ipToString(this.toBinary(this.ip.ip));
-            var r = this.combinations(this.subnetBitN);
-            var p1 = s.substring(0,Number(this.ip.prefix));
-            var p2 = s.substring(s.length - this.getHostN(this.host),s.length);
-            r.forEach(element => {
-                var t = (p1 + element + p2).split('');
-                var t2 = ''
-                for(var i=0;i<t.length;i++){
-                    if(i==8||i==16||i==24){
-                        t2 += '.';
-                    }
-                    t2 += t[i];
-                }
-                this.networks.push(this.ipToString(this.toDecimal(t2.split('.')),2));
-                this.bradcast.push(this.ipToString(this.broadcasteCalc(this.toDecimal(t2.split('.'))),2));
-            });
-            
-        },
-        broadcasteCalc: function(subIp){
-            var binMaskinverted = this.invertSubmask(this.toBinary(this.getMask(this.newPrefix).split('.')));
-            var plainIp = this.ipToString(this.toBinary(subIp),3).split('');
-            var plainIpMaskI = this.ipToString(binMaskinverted,3).split('');
-            var s = ''
-            for(var i=0;i<plainIp.length;i++){
-                if(i == 8 || i==16 || i==24){
-                    s+='.'
-                }
-                if(plainIp[i] ==1 || plainIpMaskI[i] == 1){
-                    s+='1';
-                }else{
-                    s+='0';
-                }
+            this.subnetN = 2 ** this.getSubnetNumber(this.host,this.ip.prefix);
+            this.subnetBitN = this.getSubnetNumber(this.host,this.ip.prefix);
+            this.hostusableN = this.hostN - 2;
+            var newInfo = this.subnetCalc(this.ip.prefix,this.subnetBitN,this.ip.ip,this.host);
+            this.newPrefix = newInfo.nP;
+            this.newMask = newInfo.nM;
+            this.networks = newInfo.net;
+            this.bradcast = newInfo.broad;
+            if(this.ip.reverse==true){
+                this.networks = this.networks.reverse();
+                this.bradcast = this.bradcast.reverse();
             }
-            return this.toDecimal(s.split('.'));
-        },
-        findFirst: function(subIp){
-            var t = this.toBinary(subIp.split('.'));
-            var t2 = t[t.length-1].split('')
-            t2[t2.length-1] = '1';
-            t2 = t2.join('');
-            t[t.length-1] = t2;
-            return(t);
-        },
-        findLast:function(subIp){
-            var t = subIp.split('.');
-            t[t.length-1] = t[t.length-1]-1;
-            return t;
         },
         getIndex: function(n){
-            var t = this.networks.length;
-            if((t-n)>10){
-                return 10;
+            if(this.ip.reverse){
+                return this.networks.length - 1 - n;
             }else{
-                return t-n;
+                return n;
             }
         },
         infiniteHandler: function($state) {
