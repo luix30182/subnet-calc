@@ -1,6 +1,6 @@
 <template>
 <div id="main" class="container">
-    <vlist-app></vlist-app>
+    <vlist-app v-on:updateVLSM="updateVLSM($event)"></vlist-app>
     <h1>Subnet Calculator</h1>
     <div class="row">
         <div class="col-sm-12 col-md-6">
@@ -12,7 +12,7 @@
             </div>            
             <button @click="subnetp" type="button" class="btn btn-dark">Subnet</button>
             <button @click="clear" type="button" class="btn btn-dark">Clear</button>
-            <button @click="$modal.show('list')" type="button" class="btn btn-primary">VLSM</button>
+            <button @click="viewList" type="button" class="btn btn-primary">VLSM</button>
         </div>
         <div id="ipInfo" class="col-sm-12 col-md-6">
             <h3>Network Info</h3>
@@ -25,7 +25,7 @@
         </div>
     </div>
     <subnet-app v-if="showSubnet" v-bind:ip='ip,host'></subnet-app>
-
+    <vlsm-app v-if="showVlsm" v-bind:vlsm="vlsm,ip"></vlsm-app>
 </div>
 </template>
 
@@ -55,7 +55,8 @@
         },
         host: '',
         showSubnet: false,
-        showVlsm: false
+        showVlsm: false,
+        vlsm:[]
       }
     },
     methods:{
@@ -65,13 +66,20 @@
       },
       clear: function(){
         this.showSubnet = false;
+        this.showVlsm = false;
       },
       separete: function(){
         var sip = this.ip.dec.split('/');
         this.ip.prefix = sip.pop();
         this.ip.ip = sip[0].split('.');
       },
-      
+      viewList: function(){
+        this.$modal.show('list');
+      },
+      updateVLSM: function(event){
+        this.vlsm = event;
+        this.showVlsm = true;
+      }
     },
     computed:{
       binaryIP:function(){
@@ -99,8 +107,7 @@
         }else{
           return ''
         }
-      },
-      
+      }
     },
     mixins: [subetMixins]
   }
