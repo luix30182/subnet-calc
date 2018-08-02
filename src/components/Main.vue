@@ -7,7 +7,7 @@
             <input v-model.lazy='ip.dec' required class="form-control" type="tel" placeholder="Ip Address/Prefix">
             <input required v-model.lazy='host'  class="form-control" type="tel" placeholder="Host Number">
             <div class="form-check position-static">
-              <input class=" form-check-input position-static" type="checkbox" id="reverse" value="Invert Order" v-model.lazy="ip.reverse" v-bind:disabled="showSubnet">
+              <input class=" form-check-input position-static" type="checkbox" id="reverse" value="Invert Order" v-model.lazy="ip.reverse" v-bind:disabled="!isReverse">
               <label class="form-check-label position-static" for="reverse">  Invert Order</label>
             </div>            
             <button @click="subnetp" type="button" class="btn btn-dark">Subnet</button>
@@ -56,6 +56,7 @@
         host: '',
         showSubnet: false,
         showVlsm: false,
+        isReverse: true,
         vlsm:[]
       }
     },
@@ -63,10 +64,12 @@
       subnetp: function(){
           this.separete();
           this.showSubnet = true; 
+          this.isReverse = false
       },
       clear: function(){
         this.showSubnet = false;
         this.showVlsm = false;
+        this.isReverse = true;
       },
       separete: function(){
         var sip = this.ip.dec.split('/');
@@ -79,6 +82,7 @@
       updateVLSM: function(event){
         this.vlsm = event;
         this.showVlsm = true;
+        this.isReverse = false;
       }
     },
     computed:{
