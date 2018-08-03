@@ -48,7 +48,8 @@ export default {
             cvlsm: [],
             cvlsmb:[],
             cvlsmp:[],
-            n: []
+            n: [],
+            windowWidth: 0
         }
     },
     methods: {
@@ -128,6 +129,9 @@ export default {
                 return true;
             }
         }
+    },
+    beforeMount(){
+        this.windowWidth = window.innerWidth;
     },
     mounted(){
         this.countN();

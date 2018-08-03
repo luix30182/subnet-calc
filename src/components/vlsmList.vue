@@ -31,7 +31,7 @@
 </modal>
 </template>
 <script>
-import PerfectScrollbar from 'perfect-scrollbar';
+//import PerfectScrollbar from 'perfect-scrollbar';
 const MODAL_WIDTH = 656
 export default {
     data(){

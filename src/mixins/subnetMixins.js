@@ -218,7 +218,8 @@ export default {
         nM: ''
       };
       ipNew.nP = Number(prefix) + subnetBit;
-      ipNew.nM = this.getMask(prefix);
+      ipNew.nM = this.getMask(Number(prefix));
+      
       var s = this.ipToString(this.toBinary(ip));
       var r = this.combinations(subnetBit);
       var p1 = s.substring(0, Number(prefix));

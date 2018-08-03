@@ -10,9 +10,9 @@
               <input class=" form-check-input position-static" type="checkbox" id="reverse" value="Invert Order" v-model.lazy="ip.reverse" v-bind:disabled="!isReverse">
               <label class="form-check-label position-static" for="reverse">  Invert Order</label>
             </div>            
-            <button @click="subnetp" type="button" class="btn btn-dark">Subnet</button>
-            <button @click="clear" type="button" class="btn btn-dark">Clear</button>
-            <button @click="viewList" type="button" class="btn btn-primary">VLSM</button>
+            <button v-if="!showButton" @click="subnetp" type="button" class="btn btn-dark">Subnet</button>
+            <button v-if="showButton" @click="buttonSitch" type="button" class="btn btn-dark">Re subnet</button>
+            <button v-if="!showButton" @click="viewList" type="button" class="btn btn-primary">VLSM</button>
         </div>
         <div id="ipInfo" class="col-sm-12 col-md-6">
             <h3>Network Info</h3>
@@ -24,7 +24,7 @@
             <p>Binary: {{toBinaryMask}}</p>
         </div>
     </div>
-    <subnet-app v-if="showSubnet" v-bind:ip='ip,host'></subnet-app>
+    <subnet-app v-if="showSubnet" v-bind:host="host" v-bind:ip='ip'></subnet-app>
     <vlsm-app v-if="showVlsm" v-bind:vlsm="vlsm,ip"></vlsm-app>
 </div>
 </template>
@@ -57,19 +57,40 @@
         showSubnet: false,
         showVlsm: false,
         isReverse: true,
+        showButton: false,
         vlsm:[]
       }
     },
     methods:{
-      subnetp: function(){
-          this.separete();
-          this.showSubnet = true; 
-          this.isReverse = false
+      buttonSitch: function(){
+        if(this.showSubnet){
+           this.showSubnet = !this.showSubnet;
+        }
+        if(this.showVlsm){
+         this.showVlsm = !this.showVlsm;
+        }
+        this.showButton = !this.showButton;
       },
-      clear: function(){
-        this.showSubnet = false;
-        this.showVlsm = false;
-        this.isReverse = true;
+      itsIp: function(ipaddress){
+        ipaddress = ipaddress.split('/');
+        if (/^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/.test(ipaddress[0])) {  
+          return (true);
+        }   
+        return (false);
+      },
+      itsPrefix: function(prefix){
+          prefix = prefix.split('/');
+          if(Number(prefix[1])>=8 && Number(prefix[1])<=32){
+            return (true);
+          }
+          return (false);
+      },
+      subnetp: function(){
+          if(this.itsIp(this.ip.dec) && this.itsPrefix(this.ip.dec) && !isNaN(this.host) && Number(this.host)){
+            this.showSubnet = !this.showSubnet;
+            this.isReverse = !this.isReverse;
+            this.showButton = !this.showButton;
+          }
       },
       separete: function(){
         var sip = this.ip.dec.split('/');
@@ -77,12 +98,15 @@
         this.ip.ip = sip[0].split('.');
       },
       viewList: function(){
-        this.$modal.show('list');
+        if(this.itsIp(this.ip.dec) && this.itsPrefix(this.ip.dec)){
+          this.$modal.show('list');
+          this.showButton = !this.showButton;
+        }
       },
       updateVLSM: function(event){
         this.vlsm = event;
         this.showVlsm = true;
-        this.isReverse = false;
+        this.isReverse = !this.isReverse;
       }
     },
     computed:{

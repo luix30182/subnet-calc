@@ -41,7 +41,7 @@
 <script>
 import subnetMixin from '../mixins/subnetMixins';
 import InfiniteLoading from 'vue-infinite-loading';
-import PerfectScrollbar from 'perfect-scrollbar';
+//import PerfectScrollbar from 'perfect-scrollbar';
 export default {
     components: {
         InfiniteLoading
@@ -126,7 +126,7 @@ export default {
     },
     mounted(){
         this.subnet();
-        var ps = new PerfectScrollbar('.containerS');
+        //var ps = new PerfectScrollbar('.containerS');
         this.$nextTick(() => {
             window.addEventListener('resize', () => {
                 this.windowWidth = window.innerWidth
