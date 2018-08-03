@@ -1,6 +1,6 @@
 <template>
     <div id="vlsm">
-        <h1 class="">Subnet VLSM</h1>
+        <h4 class="">Subnet VLSM</h4>
         <div class="containerS">
             <div class="contentS">
                 <table class="table striped centered">

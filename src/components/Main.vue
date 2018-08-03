@@ -20,7 +20,7 @@
       </label>
     </div>
     <div class="col s12 m6">
-      <a v-if="showButton" @click="buttonSitch" class=" col s12 blue darken-3 waves-effect waves-dark btn">Re subnet/VLSM</a>
+      <a id="resub" v-if="showButton" @click="buttonSitch" class=" col s12 blue darken-3 waves-effect waves-dark btn">Re subnet/VLSM</a>
     </div>
   </div>
 
@@ -268,6 +268,9 @@ global.$ = jQuery
 @media only screen and (max-width: 767px) {
   .subnetButton {
     top: 0px;
+  }
+  #resub{
+    margin-top: 20px;
   }
 }
 </style>
