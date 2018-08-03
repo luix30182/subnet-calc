@@ -80,7 +80,7 @@
     <div id="subnet" class="col s12">
       <div class="row">
         <div class="input-field col s12 m6">
-          <input v-model.lazy='host' type="tel" placeholder="5000" id="ipAddress" class="validate center-align">
+          <input required v-model.lazy='host' type="tel" placeholder="5000" id="ipAddress" class="validate center-align">
           <label for="ipAddress">Host Number</label>
         </div>
         <div class="subnetButton input-field col s12 m6">
