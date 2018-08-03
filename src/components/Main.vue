@@ -1,31 +1,106 @@
 <template>
 <div id="main" class="container">
-    <vlist-app v-on:updateVLSM="updateVLSM($event)"></vlist-app>
-    <h1>Subnet Calculator</h1>
-    <div class="row">
-        <div class="col-sm-12 col-md-6">
-            <input v-model.lazy='ip.dec' required class="form-control" type="tel" placeholder="Ip Address/Prefix">
-            <input required v-model.lazy='host'  class="form-control" type="tel" placeholder="Host Number">
-            <div class="form-check position-static">
-              <input class=" form-check-input position-static" type="checkbox" id="reverse" value="Invert Order" v-model.lazy="ip.reverse" v-bind:disabled="!isReverse">
-              <label class="form-check-label position-static" for="reverse">  Invert Order</label>
-            </div>            
-            <button v-if="!showButton" @click="subnetp" type="button" class="btn btn-dark">Subnet</button>
-            <button v-if="showButton" @click="buttonSitch" type="button" class="btn btn-dark">Re subnet</button>
-            <button v-if="!showButton" @click="viewList" type="button" class="btn btn-primary">VLSM</button>
-        </div>
-        <div id="ipInfo" class="col-sm-12 col-md-6">
-            <h3>Network Info</h3>
-            <h5>Network</h5>
-            <p>Decimal: {{ip.dec}}</p>
-            <p>Binary: {{binaryIP}}</p>
-            <h5>NetMask</h5>
-            <p>Decimal: {{maskIP}}</p>
-            <p>Binary: {{toBinaryMask}}</p>
-        </div>
+  <h1>Subnet Calculator</h1>
+  <vlist-app v-on:updateVLSM="updateVLSM($event)"></vlist-app>
+  <div class="row">
+    <div class="col s12 m6 offset-m3">
+      <div class="input-field col s12">
+        <input v-model.lazy='ip.dec' required type="tel" placeholder="192.168.10.0/24" id="ipAddress" class="validate center-align">
+        <label for="ipAddress">Ip Address</label>
+      </div>
     </div>
-    <subnet-app v-if="showSubnet" v-bind:host="host" v-bind:ip='ip'></subnet-app>
-    <vlsm-app v-if="showVlsm" v-bind:vlsm="vlsm,ip"></vlsm-app>
+  </div>
+
+  <div class="row">
+    <div class="switch col s12 m6">
+      <label>
+        <input id="reverse" value="Invert Order" v-model.lazy="ip.reverse" v-bind:disabled="!isReverse" type="checkbox">
+        <span class="lever"></span>
+        Reverse order when subneting/VLSM
+      </label>
+    </div>
+    <div class="col s12 m6">
+      <a v-if="showButton" @click="buttonSitch" class=" col s12 blue darken-3 waves-effect waves-dark btn">Re subnet/VLSM</a>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col s12">
+      <ul class="tabs blue-text">
+        <li class="tab col s4">
+          <a href="#subnet">Subnet</a>
+        </li>
+        <li class="tab col s4">
+          <a class="active" href="#ipinfo">Ip info</a>
+        </li>
+
+        <li class="tab col s4">
+          <a href="#vlsm">VLSM</a>
+        </li>
+      </ul>
+    </div>
+
+    <div id="ipinfo" class="col s12">
+      <table>
+        <thead>
+          <tr>
+            <th>Network</th>
+            <th> </th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Decimal: </td>
+            <td>Binary: </td>
+          </tr>
+          <tr>
+            <td>{{ip.dec}}</td>
+            <td>{{binaryIP}}</td>
+          </tr>
+        </tbody>
+        <thead>
+          <tr>
+            <th>Netmask</th>
+            <th> </th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Decimal: </td>
+            <td>Binary:</td>
+          </tr>
+          <tr>
+            <td>{{maskIP}}</td>
+            <td>{{toBinaryMask}}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div id="subnet" class="col s12">
+      <div class="row">
+        <div class="input-field col s12 m6">
+          <input v-model.lazy='host' type="tel" placeholder="5000" id="ipAddress" class="validate center-align">
+          <label for="ipAddress">Host Number</label>
+        </div>
+        <div class="subnetButton input-field col s12 m6">
+          <a v-if="!showButton" @click="subnetp"  class=" col s12 blue darken-3 waves-effect waves-dark btn">Subnet</a>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col s12">
+          <subnet-app v-if="showSubnet" v-bind:host="host" v-bind:ip='ip'></subnet-app>
+        </div>
+      </div>
+    </div>
+
+    <div id="vlsm" class="col s12">
+      <div class="subnetButton input-field col s12 m6 offset-m3">
+        <a v-if="!showButton" @click="viewList" class=" col s12 blue darken-3 waves-effect waves-dark btn">VLSM List</a>
+      </div>
+      <vlsm-app v-if="showVlsm" v-bind:vlsm="vlsm,ip"></vlsm-app>
+    </div>
+  </div>
 </div>
 </template>
 
@@ -34,6 +109,9 @@
   import Vlsm from './Vlsm.vue'
   import vlsmList from './vlsmList.vue'
   import subetMixins from'../mixins/subnetMixins'
+import jQuery from 'jquery'
+global.jQuery = jQuery
+global.$ = jQuery
   export default {
     components:{
       'subnet-app': Subnet,
@@ -137,36 +215,59 @@
         }
       }
     },
-    mixins: [subetMixins]
+    mixins: [subetMixins],
+    mounted(){
+      this.$nextTick(() => {
+
+        jQuery('.tabs').tabs();
+        jQuery(".tabs>.indicator").css("background-color", '#1e88e5');
+      });
+    }
   }
 </script>
 
 <style scoped>
-#main{
-  margin-top: 10px;
-  padding-top: 20px;
+#subnet,
+#ipinfo,
+#vlsm {
+  margin-top: 30px;
 }
-input,button{
-    margin-top: 15px;
+
+.subnetButton {
+  top: 10px;
 }
-button{
-    margin-left: 10px; 
+/* label color */
+.input-field label {
+  color: #000 !important;
 }
-#ipInfo{
-  background: #eee;
-  padding: 20px;
-  -webkit-border-radius: 20px;
-  -moz-border-radius: 20px;
-  border-radius: 20px;
+/* label focus color */
+.input-field input[type=text]:focus+label {
+  color: #2196f3 !important;
 }
-#ipInfo > p{
-  padding: 0;
-  margin: 0;
+/* label underline focus color */
+.input-field input[type=text]:focus {
+  border-bottom: 1px solid #2196f3 !important;
+  box-shadow: 0 1px 0 0 #2196f3 !important;
 }
+
+.tabs .tab a {
+  color: #1e88e5 !important;
+}
+.tabs .tab a:hover,
+.tabs .tab a.active {
+  background-color: transparent !important;
+  color: #1976d2 !important;
+}
+.tabs .indicator {
+  background-color: #1e88e5 !important;
+}
+.tabs .tab.disabled a,.tabs .tab.disabled a:hover {
+	color: #1976d2 !important;	
+}
+
 @media only screen and (max-width: 767px) {
-  #ipInfo{
-    margin-top: 20px;
-    margin-bottom: 20px;
+  .subnetButton {
+    top: 0px;
   }
 }
 </style>

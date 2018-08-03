@@ -3,27 +3,25 @@
     <div id="list">
         <div class="containerS">
             <div class="contentS">
-                <table class="table text-center">
-                    <thead class="thead-dark">
+                <table class="table striped centered">
+                    <thead>
                         <tr>
-                            <th scope="col">#Subnet</th>
-                            <th scope="col">Network</th>
-                            <th scope="col"> </th>
+                            <th>#Subnet</th>
+                            <th>Network</th>
                         </tr>
                     </thead>
-                    <tbody class="text-center">
+                    <tbody>
                         <tr v-for="(input, index) in inputs" :key="index">
-                            <th scope="row">#{{index}}</th>
-                            <td><input :ref="'vlist'" v-on:keyup.enter="addRow" v-model="inputs[index]" class="form-control" type="tel" placeholder="Numer of host"></td>
-                            <td><button class="btn" @click="deleteRow(index)">-</button></td>
+                            <td>#{{index}}</td>
+                            <td><input :ref="'vlist'" v-on:keyup.enter="addRow" v-model="inputs[index]"  type="tel" placeholder="Numer of host"></td>
+                            <td><a class="blue darken-3 waves-effect waves-dark btn" @click="deleteRow(index)">-</a></td>
                         </tr>
-                       <div class="container">
-                           <button @click="addRow" class="btn">+</button>
-                       </div>
+                       
                     </tbody>
                 </table>
-                <div class="container">
-                    <button  @click="orderList" class="btn btn-primary btn-block">OK</button>
+                    <div class="row">
+                    <a id="add" @click="addRow" class="col s2 offset-s1 blue darken-3 waves-effect waves-dark btn">+</a>
+                    <a id="ok" @click="orderList" class="col s7 offset-s1 blue darken-3 waves-effect waves-dark btn">OK</a> 
                 </div>
             </div>
         </div>
@@ -94,8 +92,14 @@ export default {
   width: 100%;
   height: 400px;
 }
-#list{
-    background: #fff;
-    margin: 0 auto;
+td{
+    padding: 0;
+}
+#add{
+    margin-top:10px;
+    margin-bottom: 5px;
+}
+#ok{
+    margin-top:10px; 
 }
 </style>

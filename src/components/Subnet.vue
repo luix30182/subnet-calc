@@ -1,27 +1,39 @@
 <template>
 <div id="subnet">
-    <div class="container ">
-        <h1 class="">Subnet</h1>
-        <p>Jump step: {{hostN}}</p>
-        <p># Sunets : {{subnetN}}</p>
-        <p># Subnet bits: {{subnetBitN}}</p>
-        <p># Usable Host/subnet : {{hostusableN}}</p>
-        <p><strong>New Mask: {{newMask}}/{{newPrefix}}</strong></p>
+    <div>
+        <h4 class="">Subnet</h4>
+        <table class="striped centered">
+            <thead>
+                <tr>
+                    <th>Sunets</th>
+                    <th>Subnet bits</th>
+                    <th>Usable Host/subnet</th>
+                    <th>Mask</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>{{subnetN}}</td>
+                    <td>{{subnetBitN}}</td>
+                    <td>{{hostusableN}}</td>
+                    <td>{{newMask}}/{{newPrefix}}</td>
+                </tr>
+            </tbody>
+        </table>
         <div class="containerS">
             <div class="contentS">
-                <table class="table text-center">
-                    <thead class="thead-dark">
+                <table class="table striped centered">
+                    <thead>
                         <tr>
-                            <th scope="col">#Subnet</th>
-                            <th scope="col">Network</th>
-                            <th v-if="!itsMobile()" scope="col">Usable Host Range</th>
-                            <th v-if="!itsMobile()" scope="col">Broadcast</th>
+                            <th>#Subnet</th>
+                            <th>Network</th>
+                            <th v-if="!itsMobile()">Usable Host Range</th>
+                            <th v-if="!itsMobile()">Broadcast</th>
                         </tr>
                     </thead>
-                    <tbody class="text-center">
-                        <tr v-bind:class="{'table-secondary': bcolor(index),'text-dark': bcolor(index),last: index === (networks.length-1)}" v-for="(net,index) in netList"
-                            :key="net">
-                            <th scope="row">{{getIndex(index)}}</th>
+                    <tbody>
+                        <tr v-for="(net,index) in netList" :key="net">
+                            <th>{{getIndex(index)}}</th>
                             <td>{{net}}/{{newPrefix}}</td>
                             <td v-if="!itsMobile()">{{ipToString(toDecimal(findFirst(net)),2)}} >> {{ipToString(findLast(bradcast[index]),2)}}</td>
                             <td v-if="!itsMobile()">{{bradcast[index]}}/{{newPrefix}}</td>

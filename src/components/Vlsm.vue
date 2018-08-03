@@ -3,26 +3,24 @@
         <h1 class="">Subnet VLSM</h1>
         <div class="containerS">
             <div class="contentS">
-                <table class="table text-center">
-                    <thead class="thead-dark">
+                <table class="table striped centered">
+                    <thead>
                         <tr>
-                            <th scope="col">#Subnet</th>
-                            <th scope="col">#Host</th>
-                            <th scope="col">Network</th>
-                            <th v-if="!itsMobile()" scope="col">Usable Host Range</th>
-                            <th v-if="!itsMobile()" scope="col">Broadcast</th>
+                            <th>#Subnet</th>
+                            <th>#Host</th>
+                            <th>Network</th>
+                            <th v-if="!itsMobile()">Usable Host Range</th>
+                            <th v-if="!itsMobile()">Broadcast</th>
                         </tr>
                     </thead>
-                    <tbody class="text-center">
-                        <tr v-bind:class="{'table-secondary': bcolor(index),'text-dark': bcolor(index),last: index === (cvlsm.length-1)}" v-for="(net,index) in cvlsm"
-                            :key="net">
-                            <th scope="row">{{getIndex(index)}}</th>
+                    <tbody>
+                        <tr v-for="(net,index) in cvlsm" :key="net">
+                            <th>{{getIndex(index)}}</th>
                             <td>{{vlsm[index]}}</td>
                             <td>{{net}}/{{cvlsmp[index]}}</td>
                             <td v-if="!itsMobile()">{{ipToString(toDecimal(findFirst(net)),2)}} >> {{ipToString(findLast(cvlsmb[index]),2)}}</td>
                             <td v-if="!itsMobile()">{{cvlsmb[index]}}/{{cvlsmp[index]}}</td>
                         </tr>
-                       
                     </tbody>
                 </table>
             </div>
