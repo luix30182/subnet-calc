@@ -5,6 +5,7 @@
         <table class="striped centered">
             <thead>
                 <tr>
+                    <th>Jump step</th>
                     <th>Sunets</th>
                     <th>Subnet bits</th>
                     <th>Usable Host/subnet</th>
@@ -13,6 +14,7 @@
             </thead>
             <tbody>
                 <tr>
+                    <td>{{hostN}}</td>
                     <td>{{subnetN}}</td>
                     <td>{{subnetBitN}}</td>
                     <td>{{hostusableN}}</td>
