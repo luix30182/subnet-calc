@@ -41,7 +41,21 @@
     </div>
 
     <div id="ipinfo" class="col s12">
-      <table>
+      <a id="info"@click="getInfo" class=" col s12 blue darken-3 waves-effect waves-dark btn">Ip Info</a>
+      <table v-if="showInfo">
+        <thead>
+          <tr>
+            <th>Source Ip</th>
+            <th> </th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Binary: </td>
+            <td>{{this.ipToString(this.toBinary(ip.ip),1)}}</td>
+          </tr>
+        </tbody>
+       
         <thead>
           <tr>
             <th>Network</th>
@@ -51,13 +65,14 @@
         <tbody>
           <tr>
             <td>Decimal: </td>
-            <td>Binary: </td>
+            <td>{{this.getNetwork(this.ip.ip,Number(this.ip.prefix))}}/{{this.ip.prefix}}</td>
           </tr>
           <tr>
-            <td>{{ip.dec}}</td>
-            <td>{{binaryIP}}</td>
+            <td>Binary:</td>
+            <td>{{this.ipToString(this.toBinary(this.getNetwork(this.ip.ip,Number(this.ip.prefix)).split('.')),3)}}</td>
           </tr>
         </tbody>
+
         <thead>
           <tr>
             <th>Netmask</th>
@@ -67,12 +82,41 @@
         <tbody>
           <tr>
             <td>Decimal: </td>
-            <td>Binary:</td>
+            <td>{{this.getMask(Number(ip.prefix))}}</td>
           </tr>
           <tr>
-            <td>{{maskIP}}</td>
-            <td>{{toBinaryMask}}</td>
+            <td>Binary:</td>
+            <td>{{this.ipToString(this.toBinary(this.getMask(Number(ip.prefix)).split('.')),2)}}</td>
           </tr>
+        </tbody>
+        <thead>
+          <tr>
+            <th>Broadcast</th>
+            <th> </th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Decimal: </td>
+            <td>{{this.ipToString(this.broadcasteCalc(this.getNetwork(this.ip.ip,Number(this.ip.prefix)).split('.'),Number(ip.prefix)),2)}}</td>
+          </tr>
+          <tr>
+            <td>Binary:</td>
+            <td>{{this.ipToString(this.toBinary(this.getMask(Number(ip.prefix)).split('.')),2)}}</td>
+          </tr>
+        </tbody>
+         <thead>
+          <tr>
+            <th>Host Usable Range</th>
+            <th> </th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td> </td>
+            <td>{{this.ipToString(this.toDecimal(this.findFirst(this.getNetwork(this.ip.ip,Number(this.ip.prefix)))),2)}}  >> {{usableRange}}</td>
+          </tr>
+            
         </tbody>
       </table>
     </div>
@@ -109,9 +153,9 @@
   import Vlsm from './Vlsm.vue'
   import vlsmList from './vlsmList.vue'
   import subetMixins from'../mixins/subnetMixins'
-import jQuery from 'jquery'
-global.jQuery = jQuery
-global.$ = jQuery
+  import jQuery from 'jquery'
+  global.jQuery = jQuery
+  global.$ = jQuery
   export default {
     components:{
       'subnet-app': Subnet,
@@ -131,11 +175,17 @@ global.$ = jQuery
           ip:[],
           reverse:false
         },
+        ipSource:{
+          bin: '',
+          net: '',
+
+        },
         host: '',
         showSubnet: false,
         showVlsm: false,
         isReverse: true,
         showButton: false,
+        showInfo: false,
         vlsm:[]
       }
     },
@@ -148,6 +198,7 @@ global.$ = jQuery
          this.showVlsm = !this.showVlsm;
         }
         this.showButton = !this.showButton;
+        this.isReverse = true;
       },
       itsIp: function(ipaddress){
         ipaddress = ipaddress.split('/');
@@ -165,9 +216,11 @@ global.$ = jQuery
       },
       subnetp: function(){
           if(this.itsIp(this.ip.dec) && this.itsPrefix(this.ip.dec) && !isNaN(this.host) && Number(this.host)){
-            this.showSubnet = !this.showSubnet;
-            this.isReverse = !this.isReverse;
-            this.showButton = !this.showButton;
+            if(this.itsInMask(this.ip.ip,Number(this.ip.prefix))){
+              this.showSubnet = !this.showSubnet;
+              this.isReverse = !this.isReverse;
+              this.showButton = !this.showButton;
+            }
           }
       },
       separete: function(){
@@ -176,7 +229,7 @@ global.$ = jQuery
         this.ip.ip = sip[0].split('.');
       },
       viewList: function(){
-        if(this.itsIp(this.ip.dec) && this.itsPrefix(this.ip.dec)){
+        if(this.itsIp(this.ip.dec) && this.itsPrefix(this.ip.dec) && this.itsInMask(this.ip.ip,Number(this.ip.prefix))){
           this.$modal.show('list');
           this.showButton = !this.showButton;
         }
@@ -185,40 +238,44 @@ global.$ = jQuery
         this.vlsm = event;
         this.showVlsm = true;
         this.isReverse = !this.isReverse;
+      },
+      itsInMask: function(ip,prefix){
+        var s = this.ipToString(this.toBinary(ip),3).split('');
+        var s2 = this.ipToString(this.toBinary(this.getMask(prefix).split('.')),3).split('');
+        var s3 = '';
+        for(var i = 0;i<s.length;i++){
+          if(s[i] == 1 &&  s2[i]==1){
+            s3 += s[i];
+          }else{
+            s3 += '0'
+          }
+        }
+        if(s3 == s.join('')){
+          return true;
+        }else{
+          return false;
+        }
+      },
+      getInfo: function(){
+        if(this.ip.dec != ''){
+          this.separete();
+          if(this.itsInMask(this.ip.ip,Number(this.ip.prefix))){
+            this.showInfo = true;
+          }
+        }else{
+          this.showInfo = false;
+          return ''
+        }
       }
     },
     computed:{
-      binaryIP:function(){
-        if(this.ip.dec != ''){
-          this.separete();
-          return this.ipToString(this.toBinary(this.ip.ip,true),1);
-        }else{
-          return ''
-        }
-      },
-      maskIP:function(){
-        if(this.ip.dec != ''){
-          this.separete();
-          return this.getMask(Number(this.ip.prefix)) + '/' + this.ip.prefix;
-        }else{
-          return ''
-        }
-      },
-      toBinaryMask: function(){
-        if(this.ip.dec != ''){
-          this.separete();
-          var a = this.getMask(Number(this.ip.prefix));
-          a = a.split('.');
-          return this.ipToString(this.toBinary(a,true),1);
-        }else{
-          return ''
-        }
+      usableRange:function(){
+        return this.ipToString(this.findLast(this.ipToString(this.broadcasteCalc(this.getNetwork(this.ip.ip,Number(this.ip.prefix)).split('.'),Number(this.ip.prefix)),2)),2)
       }
     },
     mixins: [subetMixins],
     mounted(){
       this.$nextTick(() => {
-
         jQuery('.tabs').tabs();
         jQuery(".tabs>.indicator").css("background-color", '#1e88e5');
       });

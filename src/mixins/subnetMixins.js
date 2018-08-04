@@ -279,6 +279,22 @@ export default {
     },
     getSubnetNumber: function (h, p) {
       return 32 - this.getHostN(h) - Number(p);
+    },
+    getNetwork: function(ip,prefix){
+      var s = this.ipToString(this.toBinary(ip),3).split('');
+      var s2 = this.ipToString(this.toBinary(this.getMask(prefix).split('.')),3).split('');
+      var s3 = '';
+      for(var i = 0;i<s.length;i++){
+        if(i == 8 || i == 16 || i == 24){
+          s3 += '.'
+        }
+        if(s[i] == 1 &&  s2[i]==1){
+          s3 += s[i];
+        }else{
+          s3 += '0'
+        }
+      }
+      return this.ipToString(this.toDecimal(s3.split('.')),2)
     }
   }
 }

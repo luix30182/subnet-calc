@@ -1,9 +1,10 @@
 <template>
     <div id="vlsm">
-        <h4 class="">Subnet VLSM</h4>
+        
         <div class="containerS">
             <div class="contentS">
                 <table class="table striped centered">
+                    <h4 class="">Subnet VLSM</h4>
                     <thead>
                         <tr>
                             <th>#Subnet</th>
