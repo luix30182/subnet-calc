@@ -41,7 +41,7 @@
     </div>
 
     <div id="ipinfo" class="col s12">
-      <a id="info"@click="getInfo" class=" col s12 blue darken-3 waves-effect waves-dark btn">Ip Info</a>
+      <a id="info" @click="getInfo" class=" col s12 blue darken-3 waves-effect waves-dark btn">Ip Info</a>
       <table v-if="showInfo">
         <thead>
           <tr>
@@ -215,12 +215,12 @@
           return (false);
       },
       subnetp: function(){
-          if(this.itsIp(this.ip.dec) && this.itsPrefix(this.ip.dec) && !isNaN(this.host) && Number(this.host)){
-            if(this.itsInMask(this.ip.ip,Number(this.ip.prefix))){
+          if(this.itsIp(this.ip.dec) && this.itsPrefix(this.ip.dec) && !isNaN(this.host)){
+              this.separete();
               this.showSubnet = !this.showSubnet;
               this.isReverse = !this.isReverse;
               this.showButton = !this.showButton;
-            }
+            
           }
       },
       separete: function(){
@@ -229,6 +229,7 @@
         this.ip.ip = sip[0].split('.');
       },
       viewList: function(){
+        this.separete();
         if(this.itsIp(this.ip.dec) && this.itsPrefix(this.ip.dec) && this.itsInMask(this.ip.ip,Number(this.ip.prefix))){
           this.$modal.show('list');
           this.showButton = !this.showButton;
