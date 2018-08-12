@@ -1,6 +1,12 @@
 <template>
 <div id="main" class="container">
-  <h1>Subnet Calculator</h1>
+  <div class="header">
+    <h1>Subnet Calculator</h1>
+    <ul class="links">
+      <li><a href="https://github.com/luix30182/subnet-calc" target="_blank">Source code <i class="fab fa-github grey-text darken-1"></i></a></li>
+      <li><a href="https://twitter.com/luix30182" target="_blank">My twitter <i class="fab fa-twitter grey-text darken-1"></i></a></li>
+    </ul>
+  </div>
   <vlist-app v-on:updateVLSM="updateVLSM($event)"></vlist-app>
   <div class="row">
     <div class="col s12 m6 offset-m3">
@@ -322,7 +328,30 @@
 .tabs .tab.disabled a,.tabs .tab.disabled a:hover {
 	color: #1976d2 !important;	
 }
-
+.header{
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+}
+.links{
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+}
+.fab{
+  font-size: 30px;
+  margin-right: 10px;
+}
+.fab:hover{
+  color: #1976d2 !important;
+}
+@media all and (max-width: 1058px) {
+  .header {
+    -webkit-flex-flow: column wrap;
+    flex-flow: column wrap;
+    padding: 0;
+  }
+}
 @media only screen and (max-width: 767px) {
   .subnetButton {
     top: 0px;
